@@ -2,15 +2,16 @@ package org.gwaraujo.account.dto;
 
 import java.math.BigDecimal;
 
-import lombok.Builder;
-import lombok.Value;
+import org.gwaraujo.account.enums.EventType;
 
-@Value
-@Builder
+import lombok.Data;
+
+@Data
 public class OperationRequest {
 
-	private Long originAccountId;
-	private Long destinationAccountId;
+	private EventType type;
+	private Long origin;
+	private Long destination;
 	private BigDecimal amount;
 
 }

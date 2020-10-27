@@ -9,7 +9,8 @@ import org.gwaraujo.account.business.WithdrawAccountAmount;
 import org.gwaraujo.account.domain.entity.Account;
 import org.gwaraujo.account.domain.repository.AccountRepository;
 import org.gwaraujo.account.domain.vo.AccountOperationData;
-import org.gwaraujo.account.dto.OperationRequest;
+import org.gwaraujo.account.dto.AccountOperationRequest;
+import org.gwaraujo.account.exception.AccountNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -22,30 +23,34 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public BigDecimal getBalance(Long accountId) {
-		var account = accountRepository.findById(accountId).orElse(null);
+		var account = accountRepository.findById(accountId).orElseThrow(AccountNotFoundException::new);
 
 		return new GetAccountBalance().getBalance(account);
 	}
 
 	@Override
-	public Account deposit(OperationRequest request) {
-		var account = accountRepository.findById(request.getOriginAccountId())
-				.orElse(new CreateAccount().create(request.getOriginAccountId()));
+	public Account deposit(AccountOperationRequest request) {
+		var account = accountRepository.findById(request.getDestinationAccountId())
+				.orElse(createNewAccount(request.getDestinationAccountId()));
 
 		return new DepositAccountAmount().deposit(account, request.getAmount());
 	}
 
 	@Override
-	public Account withdraw(OperationRequest request) {
-		var account = accountRepository.findById(request.getOriginAccountId()).orElse(null);
+	public Account withdraw(AccountOperationRequest request) {
+		var account = accountRepository.findById(request.getOriginAccountId())
+				.orElseThrow(AccountNotFoundException::new);
 
 		return new WithdrawAccountAmount().withdraw(account, request.getAmount());
 	}
 
 	@Override
-	public AccountOperationData transfer(OperationRequest request) {
-		var originAccount = accountRepository.findById(request.getOriginAccountId()).orElse(null);
-		var destinationAccount = accountRepository.findById(request.getDestinationAccountId()).orElse(null);
+	public AccountOperationData transfer(AccountOperationRequest request) {
+		var originAccount = accountRepository.findById(request.getOriginAccountId())
+				.orElseThrow(AccountNotFoundException::new);
+
+		var destinationAccount = accountRepository.findById(request.getDestinationAccountId())
+				.orElse(createNewAccount(request.getDestinationAccountId()));
 
 		originAccount = new WithdrawAccountAmount().withdraw(originAccount, request.getAmount());
 		destinationAccount = new DepositAccountAmount().deposit(destinationAccount, request.getAmount());
@@ -57,6 +62,11 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	public void clearAccounts() {
 		accountRepository.deleteAll();
+	}
+
+	private Account createNewAccount(Long accountId) {
+		Account account = new CreateAccount().create(accountId);
+		return accountRepository.save(account);
 	}
 
 }

@@ -8,7 +8,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.gwaraujo.account.domain.entity.Account;
 import org.gwaraujo.account.domain.repository.AccountRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class InMemoryAccountRepository implements AccountRepository {
 
 	private Set<Account> accounts;

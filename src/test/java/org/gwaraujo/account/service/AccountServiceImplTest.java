@@ -10,7 +10,7 @@ import java.util.Optional;
 
 import org.gwaraujo.account.domain.entity.Account;
 import org.gwaraujo.account.domain.repository.AccountRepository;
-import org.gwaraujo.account.dto.OperationRequest;
+import org.gwaraujo.account.dto.AccountOperationRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -28,7 +28,7 @@ public class AccountServiceImplTest {
 	private AccountServiceImpl accountService;
 
 	@Test
-	void getBalanceShouldCallRepository() {
+	void getBalanceShouldCallFindById() {
 		Long accountId = 1L;
 		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
 
@@ -40,25 +40,41 @@ public class AccountServiceImplTest {
 	}
 
 	@Test
-	void depositShouldCallRepository() {
+	void depositShouldCallFindById() {
 		Long accountId = 1L;
 		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		OperationRequest request = OperationRequest.builder().originAccountId(accountId).amount(new BigDecimal(1500))
-				.build();
+		AccountOperationRequest request = AccountOperationRequest.builder().destinationAccountId(accountId)
+				.amount(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
 		accountService.deposit(request);
 
-		verify(accountRepository, only()).findById(ArgumentMatchers.eq(accountId));
+		verify(accountRepository).findById(ArgumentMatchers.eq(accountId));
 	}
 
 	@Test
-	void withdrawShouldCallRepository() {
+	void depositShouldCallSave() {
+		Long accountId = 1L;
+		Account account = Account.builder().id(accountId).balance(BigDecimal.ZERO).build();
+		AccountOperationRequest request = AccountOperationRequest.builder().destinationAccountId(accountId)
+				.amount(new BigDecimal(1500)).build();
+
+		when(accountRepository.findById(accountId)).thenReturn(Optional.ofNullable(null));
+		when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenReturn(account);
+
+		accountService.deposit(request);
+
+		verify(accountRepository).findById(ArgumentMatchers.eq(accountId));
+		verify(accountRepository).save(ArgumentMatchers.any(Account.class));
+	}
+
+	@Test
+	void withdrawShouldCallFindById() {
 		Long accountId = 1L;
 		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		OperationRequest request = OperationRequest.builder().originAccountId(accountId).amount(new BigDecimal(1500))
-				.build();
+		AccountOperationRequest request = AccountOperationRequest.builder().originAccountId(accountId)
+				.amount(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
@@ -68,11 +84,11 @@ public class AccountServiceImplTest {
 	}
 
 	@Test
-	void transferShouldCallRepository() {
+	void transferShouldCallFindById() {
 		Long accountId = 1L;
 		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		OperationRequest request = OperationRequest.builder().originAccountId(accountId).destinationAccountId(accountId)
-				.amount(new BigDecimal(1500)).build();
+		AccountOperationRequest request = AccountOperationRequest.builder().originAccountId(accountId)
+				.destinationAccountId(accountId).amount(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
@@ -82,7 +98,7 @@ public class AccountServiceImplTest {
 	}
 
 	@Test
-	void clearAccountsShouldCallRepository() {
+	void clearAccountsShouldCallDeleteAll() {
 		accountService.clearAccounts();
 		verify(accountRepository, only()).deleteAll();
 	}
