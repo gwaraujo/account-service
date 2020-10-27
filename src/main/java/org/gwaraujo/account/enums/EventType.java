@@ -1,4 +1,4 @@
-package org.gwaraujo.account.domain.entity;
+package org.gwaraujo.account.enums;
 
 public enum EventType {
 

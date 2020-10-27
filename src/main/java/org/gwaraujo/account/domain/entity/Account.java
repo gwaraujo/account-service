@@ -2,9 +2,11 @@ package org.gwaraujo.account.domain.entity;
 
 import java.math.BigDecimal;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Data;
 
-@Value
+@Data
+@Builder
 public class Account {
 
 	private Long id;

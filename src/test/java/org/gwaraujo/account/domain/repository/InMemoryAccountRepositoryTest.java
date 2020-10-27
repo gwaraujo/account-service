@@ -18,13 +18,13 @@ public class InMemoryAccountRepositoryTest {
 	private InMemoryAccountRepository repository;
 
 	@BeforeEach
-	public void setUp() {
-		this.repository = new InMemoryAccountRepository();
+	void setUp() {
+		repository = new InMemoryAccountRepository();
 	}
 
 	@Test
 	void shouldSaveNewAccount() {
-		var newAccount = new Account(1L, new BigDecimal(15000));
+		var newAccount = Account.builder().id(1L).balance(new BigDecimal(15000)).build();
 		repository.save(newAccount);
 
 		var account = repository.findById(1L);
@@ -35,7 +35,7 @@ public class InMemoryAccountRepositoryTest {
 
 	@Test
 	void shouldFindExistsAccount() {
-		var newAccount = new Account(1L, new BigDecimal(15000));
+		var newAccount = Account.builder().id(1L).balance(new BigDecimal(15000)).build();
 		repository.save(newAccount);
 
 		var account = repository.findById(1L);
@@ -51,8 +51,9 @@ public class InMemoryAccountRepositoryTest {
 
 	@Test
 	void shouldFindAllAccounts() {
-		var newAccounts = List.of(new Account(1L, new BigDecimal(15000)), new Account(2L, new BigDecimal(10000)),
-				new Account(3L, new BigDecimal(200)));
+		var newAccounts = List.of(Account.builder().id(1L).balance(new BigDecimal(15000)).build(),
+				Account.builder().id(2L).balance(new BigDecimal(10000)).build(),
+				Account.builder().id(3L).balance(new BigDecimal(200)).build());
 
 		newAccounts.forEach(a -> repository.save(a));
 		var accounts = repository.findAll();
@@ -68,8 +69,9 @@ public class InMemoryAccountRepositoryTest {
 
 	@Test
 	void shouldDeleteAllAccounts() {
-		var newAccounts = List.of(new Account(1L, new BigDecimal(15000)), new Account(2L, new BigDecimal(10000)),
-				new Account(3L, new BigDecimal(200)));
+		var newAccounts = List.of(Account.builder().id(1L).balance(new BigDecimal(15000)).build(),
+				Account.builder().id(2L).balance(new BigDecimal(10000)).build(),
+				Account.builder().id(3L).balance(new BigDecimal(200)).build());
 
 		newAccounts.forEach(a -> repository.save(a));
 
