@@ -29,8 +29,8 @@ public class AccountServiceImplTest {
 
 	@Test
 	void getBalanceShouldCallFindById() {
-		Long accountId = 1L;
-		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
+		var accountId = 1L;
+		var account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
@@ -41,10 +41,10 @@ public class AccountServiceImplTest {
 
 	@Test
 	void depositShouldCallFindById() {
-		Long accountId = 1L;
-		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		AccountOperationRequest request = AccountOperationRequest.builder().destinationAccountId(accountId)
-				.amount(new BigDecimal(1500)).build();
+		var accountId = 1L;
+		var account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
+		var request = AccountOperationRequest.builder().destinationAccountId(accountId).amount(new BigDecimal(1500))
+				.build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
@@ -55,10 +55,10 @@ public class AccountServiceImplTest {
 
 	@Test
 	void depositShouldCallSave() {
-		Long accountId = 1L;
-		Account account = Account.builder().id(accountId).balance(BigDecimal.ZERO).build();
-		AccountOperationRequest request = AccountOperationRequest.builder().destinationAccountId(accountId)
-				.amount(new BigDecimal(1500)).build();
+		var accountId = 1L;
+		var account = Account.builder().id(accountId).balance(BigDecimal.ZERO).build();
+		var request = AccountOperationRequest.builder().destinationAccountId(accountId).amount(new BigDecimal(1500))
+				.build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.ofNullable(null));
 		when(accountRepository.save(ArgumentMatchers.any(Account.class))).thenReturn(account);
@@ -71,10 +71,9 @@ public class AccountServiceImplTest {
 
 	@Test
 	void withdrawShouldCallFindById() {
-		Long accountId = 1L;
-		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		AccountOperationRequest request = AccountOperationRequest.builder().originAccountId(accountId)
-				.amount(new BigDecimal(1500)).build();
+		var accountId = 1L;
+		var account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
+		var request = AccountOperationRequest.builder().originAccountId(accountId).amount(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 
@@ -85,10 +84,10 @@ public class AccountServiceImplTest {
 
 	@Test
 	void transferShouldCallFindById() {
-		Long accountId = 1L;
-		Account account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
-		AccountOperationRequest request = AccountOperationRequest.builder().originAccountId(accountId)
-				.destinationAccountId(accountId).amount(new BigDecimal(1500)).build();
+		var accountId = 1L;
+		var account = Account.builder().id(accountId).balance(new BigDecimal(1500)).build();
+		var request = AccountOperationRequest.builder().originAccountId(accountId).destinationAccountId(accountId)
+				.amount(new BigDecimal(1500)).build();
 
 		when(accountRepository.findById(accountId)).thenReturn(Optional.of(account));
 

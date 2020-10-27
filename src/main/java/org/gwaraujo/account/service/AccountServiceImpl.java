@@ -65,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	private Account createNewAccount(Long accountId) {
-		Account account = new CreateAccount().create(accountId);
+		var account = new CreateAccount().create(accountId);
 		return accountRepository.save(account);
 	}
 
